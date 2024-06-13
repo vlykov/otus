@@ -7,28 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "Get user by userid=1",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://arch.homework/api/v1/users/1",
-					"protocol": "http",
-					"host": [
-						"arch",
-						"homework"
-					],
-					"path": [
-						"api",
-						"v1",
-						"users",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Create user John Doe",
 			"request": {
 				"method": "POST",
@@ -56,6 +34,28 @@
 					]
 				},
 				"description": "Create user John Doe"
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by userid=1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://arch.homework/api/v1/users/1",
+					"protocol": "http",
+					"host": [
+						"arch",
+						"homework"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
