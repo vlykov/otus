@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Otus.Msa.Simple.Api", "Otus.Msa.Simple.Api\Otus.Msa.Simple.Api.csproj", "{276D6F10-F7AC-4D5C-B3C4-E1325B3787F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{5E8FC221-AE83-4B1D-A4A9-F0E7A40EF82D}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\Dockerfile = deploy\Dockerfile
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{276D6F10-F7AC-4D5C-B3C4-E1325B3787F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{276D6F10-F7AC-4D5C-B3C4-E1325B3787F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{276D6F10-F7AC-4D5C-B3C4-E1325B3787F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{276D6F10-F7AC-4D5C-B3C4-E1325B3787F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A727B464-31C1-4C0A-8F51-37FB1E43CCBB}
+	EndGlobalSection
+EndGlobal

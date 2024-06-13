@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kurlyk-dp
+  labels: 
+    app: kurlyk-dp
+spec:
+  replicas: 3
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      env: prod
+  template:
+    metadata:
+      labels:
+        env: prod
+    spec:
+      containers:
+      - name: kurlyk-app-container
+        image: sakurlyk/otus:app_lesson16
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /health
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: app-configmap
+          mountPath: "/app/appsettings.json"
+          subPath: "appsettings.json"
+          readOnly: true
+        env:
+          - name: ConnectionStrings__Postgres
+            valueFrom:
+              secretKeyRef:
+                name: app-secret
+                key: connection_string          
+      volumes:
+      - name: app-configmap
+        configMap:
+          name: app-config
