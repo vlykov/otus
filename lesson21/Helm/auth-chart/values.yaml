@@ -1,0 +1,27 @@
+service:
+  image: "sakurlyk/otus:auth_lesson21"
+  replicaCount: 1
+  type: ClusterIP
+  port: 8000
+  fullnameOverride: "auth"
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: "authuser"
+        password: "authpasswd"
+        database: "authdb"
+        postgresPassword: "postgres"
+      persistence:
+        size: 0.1Gi
+      service:
+        type: ClusterIP
+        ports:
+          postgresql: "5432"
+
+ingress:
+  hosts:
+    - host: arch.homework
+      paths: ["/authorize"]

@@ -1,0 +1,27 @@
+service:
+  image: "sakurlyk/otus:app_lesson21"
+  replicaCount: 1
+  type: ClusterIP
+  port: 8000
+  fullnameOverride: "app"
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: "appuser"
+        password: "apppasswd"
+        database: "appdb"
+        postgresPassword: "postgres"
+      persistence:
+        size: 0.1Gi
+      service:
+        type: ClusterIP
+        ports:
+          postgresql: "5432"
+
+ingress:
+  hosts:
+    - host: arch.homework
+      paths: ["/profiles"]

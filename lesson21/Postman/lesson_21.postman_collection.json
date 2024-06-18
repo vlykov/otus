@@ -1,0 +1,786 @@
+{
+	"info": {
+		"_postman_id": "fafd2edb-b00e-4fa7-b98e-a2161a69dd73",
+		"name": "lesson_21",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Зарегистрировать User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 201', function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('login', pm.variables.replaceIn('{{$randomUserName}}'));\r",
+							"pm.collectionVariables.set('password', pm.variables.replaceIn('{{$randomPassword}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"email\": \"{{$randomEmail}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/authorize/api/v1/users/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorize",
+						"api",
+						"v1",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Попытка получить профиль без логина",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 401', function () {\r",
+							"  pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_Попытка изменения профиля без логина",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 401', function () {\r",
+							"  pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"{{$randomFirstName}}\",\r\n  \"lastName\": \"{{$randomLastName}}\",\r\n  \"phone\": \"{{$randomPhoneNumber}}\",\r\n  \"city\": \"{{$randomCity}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_Логин User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let session_id = pm.cookies.get('session_id');\r",
+							"pm.test('Session_id cookies set', function () {\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/authorize/api/v1/users/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorize",
+						"api",
+						"v1",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05_Изменение профиля после логина User 1",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('firstName', pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+							"pm.collectionVariables.set('lastName', pm.variables.replaceIn('{{$randomLastName}}'));\r",
+							"pm.collectionVariables.set('phone', pm.variables.replaceIn('{{$randomPhoneNumber}}'));\r",
+							"pm.collectionVariables.set('city', pm.variables.replaceIn('{{$randomCity}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"{{firstName}}\",\r\n  \"lastName\": \"{{lastName}}\",\r\n  \"phone\": \"{{phone}}\",\r\n  \"city\": \"{{city}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06_Получение профиля после логина User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  let response = pm.response.json();\r",
+							"  pm.collectionVariables.set('userId_1', response.id);\r",
+							"  pm.collectionVariables.set('login_1', response.login);\r",
+							"  pm.collectionVariables.set('email_1', response.email);\r",
+							"  pm.collectionVariables.set('firstName_1', response.firstName);\r",
+							"  pm.collectionVariables.set('lastName_1', response.lastName);\r",
+							"  pm.collectionVariables.set('phone_1', response.phone);\r",
+							"  pm.collectionVariables.set('city_1', response.city);\r",
+							"});\r",
+							"\r",
+							"pm.test('First name is actual after editing', function () {\r",
+							"  let response = pm.response.json();  \r",
+							"  pm.expect(response.firstName).to.eql(pm.collectionVariables.get('firstName'));\r",
+							"});\r",
+							"\r",
+							"pm.test('Last name is actual after editing', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.lastName).to.eql(pm.collectionVariables.get('lastName'));\r",
+							"})\r",
+							"\r",
+							"pm.test('Phone is actual after editing', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.phone).to.eql(pm.collectionVariables.get('phone'));\r",
+							"});\r",
+							"\r",
+							"pm.test('City is actual after editing', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.city).to.eql(pm.collectionVariables.get('city'));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07_Логаут User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let session_id = pm.cookies.get('session_id');\r",
+							"pm.test('Session_id cookies is not set', function () {\r",
+							"    pm.expect(session_id).undefined;\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set('session_id', session_id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/authorize/api/v1/users/logout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorize",
+						"api",
+						"v1",
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "08_Получение профиля после разлогина User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 401', function () {\r",
+							"  pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "09_Зарегистрировать User 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('login', pm.variables.replaceIn('{{$randomUserName}}'));\r",
+							"pm.collectionVariables.set('password', pm.variables.replaceIn('{{$randomPassword}}'));\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 201', function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"email\": \"{{$randomEmail}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/authorize/api/v1/users/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorize",
+						"api",
+						"v1",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10_Логин User 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let session_id = pm.cookies.get('session_id');\r",
+							"pm.test('Session_id cookies set', function () {\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/authorize/api/v1/users/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorize",
+						"api",
+						"v1",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11_Получение профиля после логина User 2 и проверка что этот не профиль пользователя User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('User id is not equal to FirstUser_Id', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.id).to.not.eql(pm.collectionVariables.get('userId_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('Login is not equal to FirstUser_Login', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.login).to.not.eql(pm.collectionVariables.get('login_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('Email is not equal to FirstUser_Email', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.email).to.not.eql(pm.collectionVariables.get('email_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('First name is not equal to FirstUser_FirstName', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.firstName).to.not.eql(pm.collectionVariables.get('firstName_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('Last name is not equal to FirstUser_LastName', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.lastName).to.not.eql(pm.collectionVariables.get('lastName_1'));\r",
+							"})\r",
+							"\r",
+							"pm.test('Phone is not equal to FirstUser_Phone', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.phone).to.not.eql(pm.collectionVariables.get('phone_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('City is not equal to FirstUser_City', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.city).to.not.eql(pm.collectionVariables.get('city_1'));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12_Изменение профиля после логина User 2 и проверка что этот не профиль пользователя User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('User id is not equal to FirstUser_Id', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.id).to.not.eql(pm.collectionVariables.get('userId_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('Login is not equal to FirstUser_Login', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.login).to.not.eql(pm.collectionVariables.get('login_1'));\r",
+							"});\r",
+							"\r",
+							"pm.test('Email is not equal to FirstUser_Email', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.email).to.not.eql(pm.collectionVariables.get('email_1'));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"{{firstName}}\",\r\n  \"lastName\": \"{{lastName}}\",\r\n  \"phone\": \"{{phone}}\",\r\n  \"city\": \"{{city}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profiles/api/v1/userprofiles/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profiles",
+						"api",
+						"v1",
+						"userprofiles",
+						"me"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;\r",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "username1",
+			"value": ""
+		},
+		{
+			"key": "password1",
+			"value": ""
+		},
+		{
+			"key": "session_id",
+			"value": ""
+		},
+		{
+			"key": "firstUserId",
+			"value": ""
+		},
+		{
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"key": "phone",
+			"value": ""
+		},
+		{
+			"key": "city",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "login",
+			"value": ""
+		},
+		{
+			"key": "userId_1",
+			"value": ""
+		},
+		{
+			"key": "login_1",
+			"value": ""
+		},
+		{
+			"key": "email_1",
+			"value": ""
+		},
+		{
+			"key": "firstName_1",
+			"value": ""
+		},
+		{
+			"key": "lastName_1",
+			"value": ""
+		},
+		{
+			"key": "phone_1",
+			"value": ""
+		},
+		{
+			"key": "city_1",
+			"value": ""
+		}
+	]
+}
