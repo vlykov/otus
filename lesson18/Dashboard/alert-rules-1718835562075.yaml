@@ -1,0 +1,195 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: TestGroup
+      folder: RuleFolder
+      interval: 5m
+      rules:
+        - uid: edp8fltzplqtcb
+          title: Error Rate Alert
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 21600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                disableTextWrap: false
+                editorMode: code
+                exemplar: false
+                expr: sum by (method) (rate(http_request_duration_seconds_count{code=~'4..|5..'}[1m]))/sum by (method) (rate(http_request_duration_seconds_count[1m]))*100
+                format: time_series
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: '{{ method }}'
+                maxDataPoints: 43200
+                range: true
+                refId: A
+                useBackend: false
+            - refId: B
+              relativeTimeRange:
+                from: 21600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              relativeTimeRange:
+                from: 21600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 50
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: cdm2rckopo9oge
+          panelId: 8
+          noDataState: OK
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: cdm2rckopo9oge
+            __panelId__: "8"
+          labels:
+            TEST: "1"
+          isPaused: false
+        - uid: ddpagnlrqesxsf
+          title: Latency Below 0.5 Alert
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 4644
+                to: 97
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                disableTextWrap: false
+                editorMode: code
+                expr: histogram_quantile(0.5, sum by(le, method, exported_endpoint) (rate(http_request_duration_seconds_bucket{exported_endpoint=~"/api/v1/users.*"}[1m])))
+                fullMetaSearch: false
+                includeNullMetadata: false
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: '{{method}} {{exported_endpoint}}'
+                maxDataPoints: 43200
+                range: true
+                refId: A
+                useBackend: false
+            - refId: B
+              relativeTimeRange:
+                from: 4644
+                to: 97
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              relativeTimeRange:
+                from: 4644
+                to: 97
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.5
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: bdpai3tr2sa2oe
+          panelId: 3
+          noDataState: OK
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: bdpai3tr2sa2oe
+            __panelId__: "3"
+          labels:
+            TEST: "1"
+          isPaused: false

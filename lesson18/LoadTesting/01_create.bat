@@ -1,0 +1,1 @@
+hey_windows_amd64.exe -z 10m -q 100 -c 100 -m POST -H "Content-Type: application/json" -D create.body "http://arch.homework/app/api/v1/users"

@@ -1,0 +1,1 @@
+hey_windows_amd64.exe -z 10m -q 5 -c 10 -m PUT "http://arch.homework/app/api/v1/users/1" -d {"userName":"johndoe589","firstName":"John","lastName":"Doe","email":"john@gmail.com","phone":"+71002003040"}

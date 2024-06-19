@@ -1,0 +1,1 @@
+hey_windows_amd64.exe -z 10m -q 100 -c 100 -m PUT -H "Content-Type: application/json" -D update.body "http://arch.homework/app/api/v1/users/1"

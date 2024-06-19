@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app-chart.fullname" . }}
+  labels:
+    {{- include "app-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.service.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "app-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app-chart.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.service.image }}"
+          ports:
+            - name: web
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.service.port }}
+              path: /health
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            timeoutSeconds: 1
+          env:
+            - name: ConnectionStrings__Postgres
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "app-chart.fullname" . }}-secret
+                  key: connection_string    
+          volumeMounts:
+            - name: {{ include "app-chart.fullname" . }}-volumemount
+              mountPath: "/app/appsettings.json"
+              subPath: "appsettings.json"
+              readOnly: true
+      volumes:
+        - name: {{ include "app-chart.fullname" . }}-volumemount
+          configMap:
+            name: {{ include "app-chart.fullname" . }}-config

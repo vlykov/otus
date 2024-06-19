@@ -1,0 +1,2 @@
+https://github.com/rakyll/hey
+https://www.madhur.co.in/blog/2023/02/23/apache-benchmark-alternative-hey.html

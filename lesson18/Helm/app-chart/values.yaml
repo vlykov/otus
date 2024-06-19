@@ -1,0 +1,1004 @@
+service:
+  image: "sakurlyk/otus:app_lesson18"
+  replicaCount: 1
+  type: ClusterIP
+  port: 8000
+  fullnameOverride: "app"
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: "appuser"
+        password: "apppasswd"
+        database: "appdb"
+        postgresPassword: "postgres"
+      persistence:
+        size: 0.1Gi
+      service:
+        type: ClusterIP
+        ports:
+          postgresql: "5432"
+
+ingress:
+  hosts:
+    - host: arch.homework
+      paths: ["/app"]
+
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      serviceMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorSelector: {}
+  
+  grafana:
+    adminUser: admin
+    adminPassword: password
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+    alerting:
+      rules.yaml:
+        apiVersion: 1
+        groups:
+          - orgId: 1
+            name: TestGroup
+            folder: RuleFolder
+            interval: 5m
+            rules:
+              - uid: edp8fltzplqtcb
+                title: Error Rate Alert
+                condition: C
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 21600
+                      to: 0
+                    datasourceUid: prometheus
+                    model:
+                      datasource:
+                          type: prometheus
+                          uid: prometheus
+                      disableTextWrap: false
+                      editorMode: code
+                      exemplar: false
+                      expr: "sum by (method) (rate(http_request_duration_seconds_count{code=~'4..|5..'}[1m]))/sum by (method) (rate(http_request_duration_seconds_count[1m]))*100"
+                      format: time_series
+                      fullMetaSearch: false
+                      includeNullMetadata: true
+                      instant: false
+                      interval: ""
+                      intervalMs: 30000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: true
+                      refId: A
+                      useBackend: false
+                  - refId: B
+                    relativeTimeRange:
+                      from: 21600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params: []
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                  - B
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                      datasource:
+                          type: __expr__
+                          uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: B
+                      type: reduce
+                  - refId: C
+                    relativeTimeRange:
+                      from: 21600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params:
+                                  - 50
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                  - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                      datasource:
+                          type: __expr__
+                          uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                dashboardUid: bdpai3tr2sa2oe
+                panelId: 8
+                noDataState: OK
+                execErrState: Error
+                for: 5m
+                annotations:
+                  __dashboardUid__: bdpai3tr2sa2oe
+                  __panelId__: "8"
+                labels:
+                  TEST: "1"
+                isPaused: false
+              - uid: ddpagnlrqesxsf
+                title: Latency Below 0.5 Alert
+                condition: C
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 4644
+                      to: 97
+                    datasourceUid: prometheus
+                    model:
+                      datasource:
+                          type: prometheus
+                          uid: prometheus
+                      disableTextWrap: false
+                      editorMode: code
+                      expr: "histogram_quantile(0.5, sum by(le, method, exported_endpoint) (rate(http_request_duration_seconds_bucket{exported_endpoint=~\"/api/v1/users.*\"}[1m])))"
+                      fullMetaSearch: false
+                      includeNullMetadata: false
+                      instant: false
+                      interval: ""
+                      intervalMs: 30000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: true
+                      refId: A
+                      useBackend: false
+                  - refId: B
+                    relativeTimeRange:
+                      from: 4644
+                      to: 97
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params: []
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                  - B
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                      datasource:
+                          type: __expr__
+                          uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: B
+                      type: reduce
+                  - refId: C
+                    relativeTimeRange:
+                      from: 4644
+                      to: 97
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params:
+                                  - 0.5
+                              type: lt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                  - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                      datasource:
+                          type: __expr__
+                          uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                dashboardUid: bdpai3tr2sa2oe
+                panelId: 3
+                noDataState: OK
+                execErrState: Error
+                for: 5m
+                annotations:
+                  __dashboardUid__: bdpai3tr2sa2oe
+                  __panelId__: "3"
+                labels:
+                  TEST: "1"
+                isPaused: false
+    dashboards:
+      default:
+        custom-dashboard:
+          json: |
+            {
+              "annotations": {
+                "list": [
+                  {
+                    "builtIn": 1,
+                    "datasource": {
+                      "type": "grafana",
+                      "uid": "-- Grafana --"
+                    },
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                  }
+                ]
+              },
+              "editable": true,
+              "fiscalYearStartMonth": 0,
+              "graphTooltip": 0,
+              "id": 33,
+              "links": [],
+              "panels": [
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 13,
+                    "w": 10,
+                    "x": 0,
+                    "y": 0
+                  },
+                  "id": 1,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "exemplar": false,
+                      "expr": "sum by(method, exported_endpoint) (rate(http_request_duration_seconds_count{exported_endpoint=~\"/api/v1/users.*\"}[1m])) ",
+                      "format": "time_series",
+                      "fullMetaSearch": false,
+                      "includeNullMetadata": true,
+                      "instant": false,
+                      "interval": "",
+                      "legendFormat": "{{method}} {{ exported_endpoint }}",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Request per seconds",
+                  "type": "timeseries"
+                },
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 10,
+                    "w": 7,
+                    "x": 10,
+                    "y": 0
+                  },
+                  "id": 3,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "expr": "histogram_quantile(0.5, sum by(le, method, exported_endpoint) (rate(http_request_duration_seconds_bucket{exported_endpoint=~\"/api/v1/users.*\"}[1m])))",
+                      "fullMetaSearch": false,
+                      "includeNullMetadata": false,
+                      "instant": false,
+                      "legendFormat": "{{method}} {{exported_endpoint}}",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Latency (0.5)",
+                  "type": "timeseries"
+                },
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 10,
+                    "w": 7,
+                    "x": 17,
+                    "y": 0
+                  },
+                  "id": 4,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "expr": "histogram_quantile(0.95, sum by(le, method, exported_endpoint) (rate(http_request_duration_seconds_bucket{exported_endpoint=~\"/api/v1/users.*\"}[1m])))",
+                      "fullMetaSearch": false,
+                      "includeNullMetadata": false,
+                      "instant": false,
+                      "legendFormat": "{{method}} {{ exported_endpoint }} ",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Latency (0.95)",
+                  "type": "timeseries"
+                },
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 11,
+                    "w": 7,
+                    "x": 10,
+                    "y": 10
+                  },
+                  "id": 5,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "expr": "histogram_quantile(0.99, sum by(le, method, exported_endpoint) (rate(http_request_duration_seconds_bucket{exported_endpoint=~\"/api/v1/users.*\"}[1m])))",
+                      "fullMetaSearch": false,
+                      "includeNullMetadata": false,
+                      "instant": false,
+                      "legendFormat": "{{method}} {{ exported_endpoint }}",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Latency (0.99)",
+                  "type": "timeseries"
+                },
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 11,
+                    "w": 7,
+                    "x": 17,
+                    "y": 10
+                  },
+                  "id": 6,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "expr": "histogram_quantile(1, sum by(le, method, exported_endpoint) (rate(http_request_duration_seconds_bucket{exported_endpoint=~\"/api/v1/users.*\"}[1m])))",
+                      "fullMetaSearch": false,
+                      "includeNullMetadata": false,
+                      "instant": false,
+                      "legendFormat": "{{method}} {{ exported_endpoint}}",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Latency (max)",
+                  "type": "timeseries"
+                },
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 8,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 8,
+                    "w": 10,
+                    "x": 0,
+                    "y": 13
+                  },
+                  "id": 8,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "pluginVersion": "10.4.3",
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "expr": "sum by (method) (rate(http_request_duration_seconds_count{code=~'4..|5..'}[1m]))/sum by (method) (rate(http_request_duration_seconds_count[1m]))*100",
+                      "fullMetaSearch": false,
+                      "hide": false,
+                      "includeNullMetadata": true,
+                      "instant": false,
+                      "legendFormat": "{{ method }} {{ exported_endpoint}}",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Errors (4xx and 5xx), %",
+                  "type": "timeseries"
+                },
+                {
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      },
+                      "mappings": [],
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    "overrides": []
+                  },
+                  "gridPos": {
+                    "h": 10,
+                    "w": 10,
+                    "x": 0,
+                    "y": 21
+                  },
+                  "id": 9,
+                  "options": {
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    }
+                  },
+                  "targets": [
+                    {
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                      },
+                      "disableTextWrap": false,
+                      "editorMode": "code",
+                      "exemplar": false,
+                      "expr": "sum by(method, exported_endpoint) (rate(http_request_duration_seconds_sum{exported_endpoint=~\"/api/v1/users.*\"}[1m])) / sum by(method, exported_endpoint) (rate(http_request_duration_seconds_count{exported_endpoint=~\"/api/v1/users.*\"}[1m]))",
+                      "format": "time_series",
+                      "fullMetaSearch": false,
+                      "includeNullMetadata": true,
+                      "instant": false,
+                      "interval": "",
+                      "legendFormat": "{{method}} {{ exported_endpoint }}",
+                      "range": true,
+                      "refId": "A",
+                      "useBackend": false
+                    }
+                  ],
+                  "title": "Average request time",
+                  "type": "timeseries"
+                }
+              ],
+              "refresh": "5s",
+              "schemaVersion": 39,
+              "tags": [],
+              "templating": {
+                "list": []
+              },
+              "time": {
+                "from": "now-30m",
+                "to": "now"
+              },
+              "timeRangeUpdatedDuringEditOrView": false,
+              "timepicker": {},
+              "timezone": "browser",
+              "title": "CUSTOM DASHBOARD",
+              "uid": "bdpai3tr2sa2oe",
+              "version": 1,
+              "weekStart": ""
+            }
