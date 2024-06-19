@@ -8,7 +8,7 @@ kubectl create namespace sakurlyk-lesson18
 kubectl config set-context --current --namespace=sakurlyk-lesson18
 ```
 
-В папке Helm выполняем команду установки сервиса приложения
+В папке `Helm` выполняем команду установки сервиса приложения
 ```
 helm -n sakurlyk-lesson18 install app-chart .\app-chart
 ```
@@ -25,10 +25,10 @@ kubectl port-forward --namespace=m service/nginx-ingress-nginx-controller 80:80
   
 После установки приложение доступно по адресу:  
   
-http://arch.homework/app/health  
+http://arch.homework/app/health   
+    
+Endpoint-ы:  
   
-Endpoint-ы:
-
 ```
 POST http://arch.homework/app/api/v1/users
 GET http://arch.homework/app/api/v1/users
@@ -36,28 +36,28 @@ PUT http://arch.homework/app/api/v1/users/1
 GET http://arch.homework/app/api/v1/users/1
 DELETE http://arch.homework/app/api/v1/users/1
 ```
-
-В папке LoadTesting находятся bat-файлы запуска отправки запросов.  
-Использовалась утилита [hey](https://github.com/rakyll/hey).
-
+  
+В папке `LoadTesting` находятся bat-файлы запуска отправки запросов.  
+Использовалась утилита [hey](https://github.com/rakyll/hey).  
+  
 
 ## Grafana
 
-После установки приложения dashboard "CUSTOM DASHBOARD" и alert rules будут автоматически доступны в графане.  
-
-Для возможности обращения к Grafana:
-
+После установки приложения dashboard с именем `CUSTOM DASHBOARD` и alert rules будут автоматически доступны в графане.  
+  
+Для возможности обращения к Grafana:  
+  
 ```
 kubectl port-forward --namespace=sakurlyk-lesson18 service/app-chart-grafana 9000:80
 ```
-
-Подключаемся по адресу http://localhost:9000
-
-Учетные данные пользователя Grafana:
-
-логин: admin
-пароль: password
-
+  
+Подключаемся по адресу http://localhost:9000  
+  
+Учетные данные пользователя Grafana:  
+  
+логин: admin  
+пароль: password  
+  
 ### Screenshots
 
 #### Метрики
@@ -66,18 +66,18 @@ kubectl port-forward --namespace=sakurlyk-lesson18 service/app-chart-grafana 900
 
 #### Настройки alert-ов
 
-![02_Alert settings.png](./Screenshots/02_Alert settings.png)
+![02_Alert-settings.png](./Screenshots/02_Alert_settings.png)
 
 #### Пример поступления нотификации в Discord по срабатыванию alert-а
 
-![03_Alert fired in discord.png](./Screenshots/03_Alert fired in discord.png)
+![03_Alert-fired-in-discord.png](./Screenshots/03_Alert_fired_in_discord.png)
 
 ## Prometheus
 
-Для возможности обращения к Prometheus (при необходимости):
-
+Для возможности обращения к Prometheus (при необходимости):  
+  
 ```
 kubectl port-forward --namespace=sakurlyk-lesson18 service/app-chart-kube-prometheus-prometheus 9090:9090
 ```
-
+  
 Подключаемся по адресу http://localhost:9090
