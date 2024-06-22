@@ -1,0 +1,821 @@
+{
+	"info": {
+		"_postman_id": "37a8fa81-1425-4b58-be90-750a79ca146a",
+		"name": "lesson_26",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Зарегистрировать пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('login', pm.variables.replaceIn('{{$randomUserName}}'));\r",
+							"pm.collectionVariables.set('password', pm.variables.replaceIn('{{$randomPassword}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"email\": \"{{$randomEmail}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/identity/users/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"identity",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Логин пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/identity/users/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"identity",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_Получение баланса (=0)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance is 0', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.balance).to.eql(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_Пополнить баланс на 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": \"400.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance/deposit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05_Получение баланса (=400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance is 400', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.balance).to.eql(400);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06_Получение списка заказов (=заказов нет)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 404', function () {\r",
+							"  pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07_Создать заказ на 100",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order with totalPrice=100.0 created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.status).to.eql(\"Created\");\r",
+							"  pm.expect(response.totalPrice).to.eql(100.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "08_Получение баланса (=300)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance is 300', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.balance).to.eql(300);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "09_Получение списка заказов (=заказ подтвержден)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Last order confirmed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql(\"Confirmed\");\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10_Получение нотификации с Поздравлением",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Last notification with Congratulations', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].message).include(\"Congratulations\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/notify/emails",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notify",
+						"emails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11_Создать заказ на 500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order with totalPrice=500.0 created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.status).to.eql(\"Created\");\r",
+							"  pm.expect(response.totalPrice).to.eql(500.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"totalPrice\": \"500.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12_Получение баланса (=300)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance is 300', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.balance).to.eql(300);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13_Получение списка заказов (=заказ не подтвержден)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Last order unconfirmed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql(\"Unconfirmed\");\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14_Получение нотификации с Сожалением",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Last notification with Congratulations', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].message).include(\"Sorry\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/notify/emails",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notify",
+						"emails"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"[INFO] Request headers: \" + JSON.stringify(pm.request.headers));\r",
+					"pm.test(\"[INFO] Request body: \" + pm.request.body);\r",
+					"pm.test(\"[INFO] Response headers: \" + JSON.stringify(pm.response.headers));\r",
+					"pm.test(\"[INFO] Response body: \" + responseBody);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "login",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "userId_1",
+			"value": ""
+		},
+		{
+			"key": "login_1",
+			"value": ""
+		},
+		{
+			"key": "email_1",
+			"value": ""
+		},
+		{
+			"key": "firstName_1",
+			"value": ""
+		},
+		{
+			"key": "lastName_1",
+			"value": ""
+		},
+		{
+			"key": "phone_1",
+			"value": ""
+		},
+		{
+			"key": "city_1",
+			"value": ""
+		},
+		{
+			"key": "order_id",
+			"value": ""
+		}
+	]
+}

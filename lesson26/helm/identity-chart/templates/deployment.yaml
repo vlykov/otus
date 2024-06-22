@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "identity-chart.fullname" . }}
+  labels:
+    {{- include "identity-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.service.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "identity-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "identity-chart.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.service.image }}"
+          ports:
+            - name: web
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.service.port }}
+              path: /health
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            timeoutSeconds: 1
+          env:
+            - name: ConnectionStrings__Postgres
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "identity-chart.fullname" . }}-secret
+                  key: connection_string
+            - name: RabbitMq__Host
+              value: {{ .Values.rabbitmq.host }}
+            - name: RabbitMq__Port
+              value: {{ .Values.rabbitmq.service.ports.amqp | quote}}
+            - name: RabbitMq__Username
+              value: {{ .Values.rabbitmq.auth.username }}
+            - name: RabbitMq__Password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "identity-chart.fullname" . }}-secret
+                  key: rabbitmq_password                  
+          volumeMounts:
+            - name: {{ include "identity-chart.fullname" . }}-volumemount
+              mountPath: "/app/appsettings.json"
+              subPath: "appsettings.json"
+              readOnly: true
+      volumes:
+        - name: {{ include "identity-chart.fullname" . }}-volumemount
+          configMap:
+            name: {{ include "identity-chart.fullname" . }}-config

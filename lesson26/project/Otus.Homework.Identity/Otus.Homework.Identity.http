@@ -1,0 +1,6 @@
+@hostaddress = http://localhost:8000
+
+GET {{hostaddress}}/health/
+Accept: application/json
+
+###
