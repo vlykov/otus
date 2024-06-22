@@ -22,7 +22,16 @@ kubectl create namespace sakurlyk-lesson26
 kubectl config set-context --current --namespace=sakurlyk-lesson26
 ```
 
+Добавление bitnami репозитория (если еще не добавляли ранее).  
+Данный репозиторий понадобится для установки rabbitmq.  
+  
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update bitnami
+```
+  
 Устанавливаем rabbitmq с прокидыванием пароля password  
+  
 ```
 helm -n sakurlyk-lesson26 install rabbitmq oci://registry-1.docker.io/bitnamicharts/rabbitmq --set auth.username=user,auth.password=password
 ```
