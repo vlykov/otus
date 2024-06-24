@@ -1,0 +1,1007 @@
+{
+	"info": {
+		"_postman_id": "1b4d83f3-bf74-4f19-8cdb-de433286a77e",
+		"name": "lesson_30",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Создать успешный заказ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order with totalPrice=100.0 created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.status).to.eql(\"Created\");\r",
+							"  pm.expect(response.totalPrice).to.eql(100.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"some_product\",\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Заказ подтвержден",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last order with status Confirmed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Confirmed\");\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_Платёж подтвержден",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last payment with status Charged', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Charged\");\r",
+							"  pm.expect(response[0].orderId).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/payments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_Товар зарезервирован",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last product reservation with status Reserved', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Reserved\");\r",
+							"  pm.expect(response[0].orderId).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05_Доставка зарезервирована",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last delivery reservation with status Reserved', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Reserved\");\r",
+							"  pm.expect(response[0].orderId).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delivery",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06_Создать заказ с ошибкой оплаты",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order with totalPrice=100.0 created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.status).to.eql(\"Created\");\r",
+							"  pm.expect(response.totalPrice).to.eql(100.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"Expensive\",\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07_Заказ отклонён",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last order with status Confirmed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Declined\");\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "08_Платёж по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order in last payment is not exist', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].orderId).to.not.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/payments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "09_Резерв склада по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order in last product reservation is not exist', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].orderId).to.not.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10_Резерв доставки по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order in last delivery reservation is not exist', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].orderId).to.not.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delivery",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11_Создать заказ с ошибкой резервирования продукта",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order with totalPrice=100.0 created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.status).to.eql(\"Created\");\r",
+							"  pm.expect(response.totalPrice).to.eql(100.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"Notexists\",\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12_Заказ отклонён",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last order with status Declined', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Declined\");\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13_Платёж по последнему заказу возвращен",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last payment with status Returned', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Returned\");\r",
+							"  pm.expect(response[0].orderId).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/payments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14_Резерв склада по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order in last product reservation is not exist', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].orderId).to.not.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "15_Резерв доставки по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order in last delivery reservation is not exist', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].orderId).to.not.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delivery",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "16_Создать заказ с ошибкой резервирования доставки",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order with totalPrice=100.0 created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.status).to.eql(\"Created\");\r",
+							"  pm.expect(response.totalPrice).to.eql(100.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"LargeSized\",\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "17_Заказ отклонён",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last order with status Declined', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Declined\");\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "18_Платёж по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last payment with status Returned', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Returned\");\r",
+							"  pm.expect(response[0].orderId).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/payments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19_Резерв склада по последнему заказу отклонён",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Last product reservation with status Declined', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].status).to.eql.toString(\"Declined\");\r",
+							"  pm.expect(response[0].orderId).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "20_Резерв доставки по последнему заказу не создавался",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order in last delivery reservation is not exist', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].orderId).to.not.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delivery",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"[INFO] Request headers: \" + JSON.stringify(pm.request.headers));\r",
+					"pm.test(\"[INFO] Request body: \" + pm.request.body);\r",
+					"pm.test(\"[INFO] Response headers: \" + JSON.stringify(pm.response.headers));\r",
+					"pm.test(\"[INFO] Response body: \" + responseBody);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "login",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "order_id",
+			"value": ""
+		}
+	]
+}

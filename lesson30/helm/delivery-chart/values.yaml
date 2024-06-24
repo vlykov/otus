@@ -1,0 +1,37 @@
+service:
+  image: "sakurlyk/otus:delivery_lesson30"
+  replicaCount: 1
+  type: ClusterIP
+  port: 8000
+  fullnameOverride: "delivery"
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: "deliveryuser"
+        password: "deliverypasswd"
+        database: "deliverydb"
+        postgresPassword: "postgres"
+      persistence:
+        size: 0.1Gi
+      service:
+        type: ClusterIP
+        ports:
+          postgresql: "5432"
+
+rabbitmq:
+  auth:
+    username: "user"
+    password: "password"
+  #host: "rabbitmq.sakurlyk-lesson30.svc.cluster.local"
+  host: "rabbitmq"
+  service:
+    ports:
+      amqp: 5672
+
+ingress:
+  hosts:
+    - host: arch.homework
+      paths: ["/delivery"]
