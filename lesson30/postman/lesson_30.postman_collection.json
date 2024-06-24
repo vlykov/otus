@@ -305,7 +305,7 @@
 							"  pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
-							"pm.test('Last order with status Confirmed', function () {\r",
+							"pm.test('Last order with status Declined', function () {\r",
 							"  let response = pm.response.json();\r",
 							"  pm.expect(response[0].status).to.eql.toString(\"Declined\");\r",
 							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
