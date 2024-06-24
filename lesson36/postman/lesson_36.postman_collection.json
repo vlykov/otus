@@ -1,0 +1,397 @@
+{
+	"info": {
+		"_postman_id": "eecce95b-3174-4545-a5f8-71d254328a16",
+		"name": "lesson_36",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Создать заказ с RequestId #1 (успешно)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.totalPrice).to.eql(100.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "c9f5f04c-1004-466c-8b3a-1690847d32ff",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"some_product\",\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Создался новый заказ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].totalPrice).to.eql(100.0);\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_Создать повторно заказ с RequestId #1 с тем же payload (=ошибка 409)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 409', function () {\r",
+							"  pm.response.to.have.status(409);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order not created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.details).to.eql(\"IdempotentError\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "c9f5f04c-1004-466c-8b3a-1690847d32ff",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"some_product\",\r\n  \"totalPrice\": \"100.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_Создать повторно заказ с RequestId #1 с другим payload (=ошибка 409)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 409', function () {\r",
+							"  pm.response.to.have.status(409);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order not created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.details).to.eql(\"IdempotentParameterMismatch\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "c9f5f04c-1004-466c-8b3a-1690847d32ff",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"other_product\",\r\n  \"totalPrice\": \"200.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05_Еще один заказ не добавился и прошлый не поменялся",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order not changed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].totalPrice).to.eql(100.0);\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06_Создать новый заказ с RequestId #2 (успешно)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order created', function () {\r",
+							"  let response = pm.response.json();  \r",
+							"  pm.expect(response.totalPrice).to.eql(300.0);\r",
+							"  pm.collectionVariables.set('order_id', pm.variables.replaceIn(response.id));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "b2cc1720-4b4e-4727-a0a1-ae7fd71ee74c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product\": \"other_product\",\r\n  \"totalPrice\": \"300.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07_Создался новый заказ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Order created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response[0].totalPrice).to.eql(300.0);\r",
+							"  pm.expect(response[0].id).to.eql(pm.collectionVariables.get('order_id'));  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"[INFO] Request headers: \" + JSON.stringify(pm.request.headers));\r",
+					"pm.test(\"[INFO] Request body: \" + pm.request.body);\r",
+					"pm.test(\"[INFO] Response headers: \" + JSON.stringify(pm.response.headers));\r",
+					"pm.test(\"[INFO] Response body: \" + responseBody);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		}
+	]
+}
