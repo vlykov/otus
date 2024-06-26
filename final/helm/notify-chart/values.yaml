@@ -1,0 +1,36 @@
+service:
+  image: "sakurlyk/otus:notify_shop"
+  replicaCount: 1
+  type: ClusterIP
+  port: 8000
+  fullnameOverride: "notify"
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: "notifyuser"
+        password: "notifypasswd"
+        database: "notifydb"
+        postgresPassword: "postgres"
+      persistence:
+        size: 0.1Gi
+      service:
+        type: ClusterIP
+        ports:
+          postgresql: "5432"
+
+rabbitmq:
+  auth:
+    username: "user"
+    password: "password"
+  host: "rabbitmq"
+  service:
+    ports:
+      amqp: 5672
+
+ingress:
+  hosts:
+    - host: arch.homework
+      paths: ["/notify"]

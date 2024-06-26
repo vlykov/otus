@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "delivery-chart.fullname" . }}-ingress
+  labels:
+    {{- include "delivery-chart.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: "http://identity.sakurlyk-shop.svc.cluster.local:8000/users/auth"
+    #nginx.ingress.kubernetes.io/auth-signin: "http://$host/identity/users/signin"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-User-Id,X-User-Login,X-User-Email"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  {{- $fullName := include "delivery-chart.fullname" . -}}
+  {{- $svcPort := .Values.service.port -}}
+  {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+        {{- range .paths }}
+          - path: {{ . }}($|/)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+        {{- end }}
+  {{- end }}

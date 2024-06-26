@@ -1,0 +1,36 @@
+service:
+  image: "sakurlyk/otus:identity_shop"
+  replicaCount: 1
+  type: ClusterIP
+  port: 8000
+  fullnameOverride: "identity"
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: "identityuser"
+        password: "identitypasswd"
+        database: "identitydb"
+        postgresPassword: "postgres"
+      persistence:
+        size: 0.1Gi
+      service:
+        type: ClusterIP
+        ports:
+          postgresql: "5432"
+
+rabbitmq:
+  auth:
+    username: "user"
+    password: "password"
+  host: "rabbitmq"
+  service:
+    ports:
+      amqp: 5672
+
+ingress:
+  hosts:
+    - host: arch.homework
+      paths: ["/identity"]
