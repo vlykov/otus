@@ -28,6 +28,10 @@ public class CustomHeadersAuthenticationHandler : AuthenticationHandler<CustomHe
         var userLogin = headerUserLogin.FirstOrDefault();
         var userEmail = headerUserEmail.FirstOrDefault();
 
+        userId = "1";
+        userLogin = "some_login";
+        userEmail = "some@email.com";
+
         if (string.IsNullOrWhiteSpace(userId)
             || !int.TryParse(userId, out var _)
             || string.IsNullOrWhiteSpace(userLogin)

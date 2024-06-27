@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "internetshop.billing": "StartDebugging",
+        "internetshop.delivery": "StartDebugging",
+        "internetshop.identity": "StartDebugging",
+        "internetshop.notify": "StartDebugging",
+        "internetshop.orders": "StartDebugging",
+        "internetshop.warehouse": "StartDebugging"
+      }
+    }
+  }
+}

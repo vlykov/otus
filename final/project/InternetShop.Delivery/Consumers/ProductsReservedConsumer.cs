@@ -6,17 +6,18 @@ using static InternetShop.Common.Contracts.MessageBroker.Events.Warehouse;
 
 namespace InternetShop.Delivery.Consumers;
 
-public class ProductReservedConsumer(CoreDbContext dbContext) : IConsumer<ProductReserved>
+public class ProductsReservedConsumer(CoreDbContext dbContext) : IConsumer<ProductsReserved>
 {
-    public async Task Consume(ConsumeContext<ProductReserved> context)
+    public async Task Consume(ConsumeContext<ProductsReserved> context)
     {
         var orderId = context.Message.OrderId;
-        var product = context.Message.Product;
         var cancellationToken = context.CancellationToken;
+
+        // todo: в этот сервис полезно было бы передавать габариты товаров
 
         try
         {
-            var delivery = Domain.Delivery.Reserve(orderId, product);
+            var delivery = Domain.Delivery.Reserve(orderId);
 
             dbContext.Add(delivery);
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -30,9 +31,9 @@ public class ProductReservedConsumer(CoreDbContext dbContext) : IConsumer<Produc
     }
 }
 
-public class ProductReservedConsumerDefinition : ConsumerDefinition<ProductReservedConsumer>
+public class ProductsReservedConsumerDefinition : ConsumerDefinition<ProductsReservedConsumer>
 {
-    public ProductReservedConsumerDefinition()
+    public ProductsReservedConsumerDefinition()
     {
         // override the default endpoint name
         //EndpointName = EndpointNames.OrdersEndpoint;
@@ -44,7 +45,7 @@ public class ProductReservedConsumerDefinition : ConsumerDefinition<ProductReser
 
     protected override void ConfigureConsumer(
         IReceiveEndpointConfigurator endpointConfigurator,
-        IConsumerConfigurator<ProductReservedConsumer> consumerConfigurator,
+        IConsumerConfigurator<ProductsReservedConsumer> consumerConfigurator,
         IRegistrationContext context)
     {
         // configure message retry with millisecond intervals

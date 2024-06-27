@@ -22,7 +22,7 @@ public class PaymentFailedConsumer(CoreDbContext dbContext) : IConsumer<PaymentF
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        await context.Publish(new OrderUnconfirmed(orderId, order.UserId), cancellationToken);
+        await context.Publish(new OrderUnconfirmed(orderId, order.UserId, reason), cancellationToken);
     }
 }
 

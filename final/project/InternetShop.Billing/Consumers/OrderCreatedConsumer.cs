@@ -14,8 +14,7 @@ public class OrderCreatedConsumer(CoreDbContext dbContext) : IConsumer<OrderCrea
     {
         var userId = context.Message.UserId;
         var orderId = context.Message.OrderId;
-        var product = context.Message.Product;
-        var quantity = context.Message.Quantity;
+        var products = context.Message.Products;
         var totalPrice = context.Message.TotalPrice;
         var cancellationToken = context.CancellationToken;
 
@@ -33,12 +32,12 @@ public class OrderCreatedConsumer(CoreDbContext dbContext) : IConsumer<OrderCrea
 
             account.Withdraw(totalPrice);
 
-            var payment = Payment.Charge(orderId, product, totalPrice);
+            var payment = Payment.Charge(orderId, userId, totalPrice);
             dbContext.Add(payment);
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            await context.Publish(new PaymentCompleted(orderId, product, quantity), cancellationToken);
+            await context.Publish(new PaymentCompleted(orderId, products), cancellationToken);
         }
         catch (Exception ex)
         {

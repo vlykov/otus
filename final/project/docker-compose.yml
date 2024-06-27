@@ -1,0 +1,82 @@
+version: '3.4'
+
+services:
+  internetshop.billing:
+    image: ${DOCKER_REGISTRY-}internetshop-billing
+    build:
+      context: .
+      dockerfile: InternetShop.Billing/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+
+
+  internetshop.delivery:
+    image: ${DOCKER_REGISTRY-}internetshop-delivery
+    build:
+      context: .
+      dockerfile: InternetShop.Delivery/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+
+
+  internetshop.identity:
+    image: ${DOCKER_REGISTRY-}internetshop-identity
+    build:
+      context: .
+      dockerfile: InternetShop.Identity/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+
+
+  internetshop.notify:
+    image: ${DOCKER_REGISTRY-}internetshop-notify
+    build:
+      context: .
+      dockerfile: InternetShop.Notify/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+
+
+  internetshop.orders:
+    image: ${DOCKER_REGISTRY-}internetshop-orders
+    build:
+      context: .
+      dockerfile: InternetShop.Orders/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+
+
+  internetshop.warehouse:
+    image: ${DOCKER_REGISTRY-}internetshop-warehouse
+    build:
+      context: .
+      dockerfile: InternetShop.Warehouse/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  postgres:
+    image: postgres
+    container_name: internetshop-postgres
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data/
+  
+  #https://zgadzaj.com/development/docker/docker-compose/containers/rabbitmq
+  #https://habr.com/ru/companies/slurm/articles/704208/
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: internetshop-rabbitmq
+    #volumes:
+    #  - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+    #  - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+    #  - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    
+volumes:
+  db:
+    driver: local

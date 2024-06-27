@@ -19,9 +19,6 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(_ => _.OrderId)
             .IsRequired();
 
-        builder.Property(_ => _.Product)
-            .IsRequired();
-
         builder.Property(_ => _.TotalPrice)
             .IsRequired();
 

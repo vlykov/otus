@@ -12,9 +12,10 @@ public class OrderUnconfirmedConsumer(CoreDbContext dbContext) : IConsumer<Order
     {
         var userId = context.Message.UserId;
         var orderId = context.Message.OrderId;
+        var reason = context.Message.Reason;
         var cancellationToken = context.CancellationToken;
 
-        var notification = new Notification(userId, $"Sorry. Order '{orderId}' is not confirmed for user '{userId}'");
+        var notification = new Notification(userId, $"Sorry. Order '{orderId}' is not confirmed for user '{userId}'. Reason: '{reason}'");
 
         dbContext.Notifications.Add(notification);
         await dbContext.SaveChangesAsync(cancellationToken);

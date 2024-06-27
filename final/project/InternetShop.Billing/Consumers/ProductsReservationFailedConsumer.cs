@@ -6,9 +6,9 @@ using static InternetShop.Common.Contracts.MessageBroker.Events.Warehouse;
 using InternetShop.Billing.Domain;
 namespace InternetShop.Billing.Consumers;
 
-public class ProductReservationFailedConsumer(CoreDbContext dbContext) : IConsumer<ProductReservationFailed>
+public class ProductsReservationFailedConsumer(CoreDbContext dbContext) : IConsumer<ProductsReservationFailed>
 {
-    public async Task Consume(ConsumeContext<ProductReservationFailed> context)
+    public async Task Consume(ConsumeContext<ProductsReservationFailed> context)
     {
         var orderId = context.Message.OrderId;
         var reason = context.Message.Reason;
@@ -29,9 +29,9 @@ public class ProductReservationFailedConsumer(CoreDbContext dbContext) : IConsum
 
         account.Deposit(payment.TotalPrice);
 
-        var rollbackPayment = Payment.Charge(orderId, payment.Product, payment.TotalPrice);
+        var rollbackPayment = Payment.Charge(orderId, payment.UserId, payment.TotalPrice);
         rollbackPayment.ReturnMoney();
-        dbContext.Add(payment);
+        dbContext.Add(rollbackPayment);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -39,7 +39,7 @@ public class ProductReservationFailedConsumer(CoreDbContext dbContext) : IConsum
     }
 }
 
-public class ProductsReservationFailedConsumerDefinition :  ConsumerDefinition<ProductReservationFailedConsumer>
+public class ProductsReservationFailedConsumerDefinition :  ConsumerDefinition<ProductsReservationFailedConsumer>
 {
     public ProductsReservationFailedConsumerDefinition()
     {
@@ -53,7 +53,7 @@ public class ProductsReservationFailedConsumerDefinition :  ConsumerDefinition<P
 
     protected override void ConfigureConsumer(
         IReceiveEndpointConfigurator endpointConfigurator,
-        IConsumerConfigurator<ProductReservationFailedConsumer> consumerConfigurator,
+        IConsumerConfigurator<ProductsReservationFailedConsumer> consumerConfigurator,
         IRegistrationContext context)
     {
         // configure message retry with millisecond intervals

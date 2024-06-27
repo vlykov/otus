@@ -9,15 +9,15 @@ public static class QueueMappings
 {
     public static void MapEventsToQueues()
     {
-        EndpointConvention.Map<DeliveryReserved>(new Uri(QueueNames.DeliveryQueue));
-        EndpointConvention.Map<DeliveryReservationFailed>(new Uri(QueueNames.FailedDeliveryQueue));
-        EndpointConvention.Map<DeliveryCompleted>(new Uri(QueueNames.DeliveryQueue));
+        EndpointConvention.Map<DeliveryReserved>(new Uri(QueueNames.DeliveryReservedQueue));
+        EndpointConvention.Map<DeliveryCompleted>(new Uri(QueueNames.DeliveryCompletedQueue));
+        EndpointConvention.Map<DeliveryReservationFailed>(new Uri(QueueNames.FailedDeliveryReservationQueue));
     }
 
     public static void MapQueuesToReceiveEndpoints(
         this IRabbitMqBusFactoryConfigurator rabbitConfigurator,
         IBusRegistrationContext context)
     {
-        rabbitConfigurator.ReceiveEndpoint(QueueNames.ProductReservationQueue, _ => _.ConfigureConsumer<ProductReservedConsumer>(context));
+        rabbitConfigurator.ReceiveEndpoint(QueueNames.ProductsReservationQueue, _ => _.ConfigureConsumer<ProductsReservedConsumer>(context));
     }
 }

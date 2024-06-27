@@ -18,13 +18,8 @@ builder.Services.AddScoped<IRequestManager, RequestManager<CoreDbContext>>();
 
 builder.Services.AddDbContext<CoreDbContext>(opt =>
 {
-#if DEBUG
-    opt.UseInMemoryDatabase(Guid.NewGuid().ToString());
-#else
     var connectionString = builder.Configuration.GetConnectionString("Postgres");
-
     opt.UseNpgsql(connectionString);
-#endif
 });
 
 builder.Services.AddAuthentication("Basic")
@@ -74,8 +69,7 @@ app.MapGet("/health", () =>
 });
 app.MapApplicationEndpoints();
 
-#if !DEBUG
-var context = app.Services.GetRequiredService<CoreDbContext>();
+await using var scope = app.Services.CreateAsyncScope();
+var context = scope.ServiceProvider.GetRequiredService<CoreDbContext>();
 await context.Database.MigrateAsync();
-#endif
 await app.RunAsync();

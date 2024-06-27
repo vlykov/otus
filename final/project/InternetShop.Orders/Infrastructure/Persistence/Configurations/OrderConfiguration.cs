@@ -16,12 +16,10 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(_ => _.UserId)
             .IsRequired();
 
-        builder.Property(_ => _.Product)
-            .IsRequired();
+        builder.HasMany(_ => _.Positions)
+            .WithOne(_ => _.Order)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(_ => _.Quantity)
-            .IsRequired();
-        
         builder.Property(_ => _.TotalPrice)
             .IsRequired();
 

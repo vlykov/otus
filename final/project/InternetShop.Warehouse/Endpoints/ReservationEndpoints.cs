@@ -10,16 +10,16 @@ namespace InternetShop.Warehouse.Endpoints;
 
 public static class ReservationEndpoints
 {
-    internal record ReservationDto(int Id, int OrderId, int ProductId, string Product, int Quantity, string Status, DateTimeOffset CreatedAt);
+    internal record ReservationDto(int Id, int OrderId, int ProductId, int Quantity, string Status, DateTimeOffset CreatedAt);
     internal record HandoverDto(int OrderId);
 
     internal static IEndpointRouteBuilder MapReservationsEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/reservations")
+        var usersGroup = endpoints.MapGroup("/warehouse/reservations")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetReservationsAsync);
-        usersGroup.MapPost("", HandoverReservationAsync);
+        usersGroup.MapPost("/handover", HandoverReservationAsync);
 
         return endpoints;
     }
@@ -36,7 +36,7 @@ public static class ReservationEndpoints
         var notifications = await dbContext.ProductReservations
             .AsNoTracking()
             .OrderByDescending(_ => _.CreatedAt)
-            .Select(reservation => new ReservationDto(reservation.Id, reservation.OrderId, reservation.ProductId, reservation.Product, reservation.Quantity, reservation.Status, reservation.CreatedAt))
+            .Select(reservation => new ReservationDto(reservation.Id, reservation.OrderId, reservation.ProductId, reservation.Quantity, reservation.Status, reservation.CreatedAt))
             .ToListAsync(cancellationToken);
 
         return notifications.Count == 0
@@ -54,12 +54,17 @@ public static class ReservationEndpoints
     {
         var user = new User((ClaimsIdentity)principal.Identity!);
 
-        if (await dbContext.ProductReservations.FirstOrDefaultAsync(reservation => reservation.OrderId == request.OrderId, cancellationToken) is not { } reservation)
+        var reservations = await dbContext.ProductReservations.Where(reservation => reservation.OrderId == request.OrderId).ToListAsync(cancellationToken);
+
+        if (reservations.Count == 0)
         {
             return TypedResults.NotFound(new ErrorResponse($"Резерв заказа с id {request.OrderId} не существует"));
         }
 
-        reservation.HandoverToDelivery();
+        foreach (var reservation in reservations)
+        {
+            reservation.HandoverToDelivery();
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

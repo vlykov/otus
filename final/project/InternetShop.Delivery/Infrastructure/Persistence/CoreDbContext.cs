@@ -16,8 +16,8 @@ public class CoreDbContext : DbContext
         modelBuilder.HasDefaultSchema("microservice");
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
-        modelBuilder.AddInboxStateEntity();
-        modelBuilder.AddOutboxMessageEntity();
-        modelBuilder.AddOutboxStateEntity();
+        modelBuilder.AddInboxStateEntity(_ => _.ToTable("InboxState", "transport"));
+        modelBuilder.AddOutboxMessageEntity(_ => _.ToTable("OutboxMessage", "transport"));
+        modelBuilder.AddOutboxStateEntity(_ => _.ToTable("OutboxState", "transport"));
     }
 }

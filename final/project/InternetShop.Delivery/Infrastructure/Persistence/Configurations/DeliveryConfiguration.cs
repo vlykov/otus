@@ -18,9 +18,6 @@ public sealed class DeliveryConfiguration : IEntityTypeConfiguration<Domain.Deli
         builder.Property(_ => _.CourierId)
             .IsRequired();
 
-        builder.Property(_ => _.Product)
-            .IsRequired();
-
         builder.Property(_ => _.Status)
             .IsRequired();
     }

@@ -29,7 +29,7 @@ public class DeliveryReservationFailedConsumer(CoreDbContext dbContext) : IConsu
         productReservation.Decline();
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        await context.Publish(new ProductReservationFailed(orderId, reason), cancellationToken);
+        await context.Publish(new ProductsReservationFailed(orderId, reason), cancellationToken);
     }
 }
 

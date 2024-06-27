@@ -17,13 +17,8 @@ builder.Services.AddScoped<IRequestManager, RequestManager<CoreDbContext>>();
 
 builder.Services.AddDbContext<CoreDbContext>(opt =>
 {
-#if DEBUG
-    opt.UseInMemoryDatabase(Guid.NewGuid().ToString());
-#else
     var connectionString = builder.Configuration.GetConnectionString("Postgres");
-
     opt.UseNpgsql(connectionString);
-#endif
 });
 
 // ƒобавл€ем IDistributedMemoryCache (нужен в частности дл€ работы сессий).
@@ -78,8 +73,7 @@ app.MapGet("/health", () =>
 });
 app.MapUserEndpoints();
 
-#if !DEBUG
-var context = app.Services.GetRequiredService<CoreDbContext>();
+await using var scope = app.Services.CreateAsyncScope();
+var context = scope.ServiceProvider.GetRequiredService<CoreDbContext>();
 await context.Database.MigrateAsync();
-#endif
 await app.RunAsync();

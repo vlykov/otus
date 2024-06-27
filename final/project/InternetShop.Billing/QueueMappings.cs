@@ -17,8 +17,8 @@ public static class QueueMappings
         this IRabbitMqBusFactoryConfigurator rabbitConfigurator,
         IBusRegistrationContext context)
     {
-        rabbitConfigurator.ReceiveEndpoint(QueueNames.OrdersQueue, _ => _.ConfigureConsumer<OrderCreatedConsumer>(context));
-        rabbitConfigurator.ReceiveEndpoint(QueueNames.FailedProductReservationQueue, _ => _.ConfigureConsumer<ProductReservationFailedConsumer>(context));
+        rabbitConfigurator.ReceiveEndpoint(QueueNames.OrdersCreatedQueue, _ => _.ConfigureConsumer<OrderCreatedConsumer>(context));
+        rabbitConfigurator.ReceiveEndpoint(QueueNames.FailedProductsReservationQueue, _ => _.ConfigureConsumer<ProductsReservationFailedConsumer>(context));
         rabbitConfigurator.ReceiveEndpoint(QueueNames.UsersQueue, _ => _.ConfigureConsumer<UserRegisteredConsumer>(context));
     }
 }

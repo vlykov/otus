@@ -4,6 +4,7 @@ using InternetShop.Warehouse.Infrastructure.Persistence;
 using static InternetShop.Common.Contracts.MessageBroker.Events.Billing;
 using static InternetShop.Common.Contracts.MessageBroker.Events.Warehouse;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace InternetShop.Warehouse.Consumers;
 
@@ -12,32 +13,49 @@ public class PaymentCompletedConsumer(CoreDbContext dbContext) : IConsumer<Payme
     public async Task Consume(ConsumeContext<PaymentCompleted> context)
     {
         var orderId = context.Message.OrderId;
-        var productToReserve = context.Message.Product;
-        var quantity = context.Message.Quantity;
+        var productsToReserve = context.Message.Products;
         var cancellationToken = context.CancellationToken;
 
         try
         {
-            if (await dbContext.Products.FirstOrDefaultAsync(_ => _.Name == productToReserve, cancellationToken) is not { } product)
+            var ids = productsToReserve.Select(_ => _.Id).ToList();
+            var dbProducts = await dbContext.Products.Where(_ => ids.Contains(_.Id)).ToListAsync(cancellationToken);
+
+            if (ids.Count != dbProducts.Count)
             {
-                throw new InvalidOperationException("Товар отсутствует на складе");
-            }
-            if (!product.CheckAvailableQuantity(quantity))
-            {
-                throw new InvalidOperationException("Недостаточное количество товара на складе");
+                throw new InvalidOperationException("Один из товар отсутствует в номенклатуре склада");
             }
 
-            product.DecreaseQuantity(quantity);
-            var reservation = Reservation.Reserve(orderId, product.Id, productToReserve, quantity);
+            var hasDuplicates = productsToReserve.GroupBy(product => product.Id)
+              .Any(group => group.Count() > 1);
 
-            dbContext.Add(reservation);
+            if (hasDuplicates)
+            {
+                throw new InvalidOperationException("Присутствуют дубликаты товара в запросе на резерв. Запрос должен содержать уникальный товар в нужном количестве");
+            }
+
+            foreach (var product in dbProducts)
+            {
+                var quantity = productsToReserve.First(_ => _.Id == product.Id).Quantity;
+                if (!product.CheckAvailableQuantity(quantity))
+                {
+                    throw new InvalidOperationException($"Недостаточное количество товара '{product.Name}' на складе. Id товара '{product.Id}'");
+                }
+
+                product.DecreaseQuantity(quantity);
+
+                var reservation = Reservation.Reserve(orderId, product.Id, quantity);
+
+                dbContext.Add(reservation);
+            }
+
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            await context.Publish(new ProductReserved(orderId, productToReserve), cancellationToken);
+            await context.Publish(new ProductsReserved(orderId, productsToReserve), cancellationToken);
         }
         catch (Exception ex)
         {
-            await context.Publish(new ProductReservationFailed(orderId, ex.Message), cancellationToken);
+            await context.Publish(new ProductsReservationFailed(orderId, ex.Message), cancellationToken);
         }
     }
 }

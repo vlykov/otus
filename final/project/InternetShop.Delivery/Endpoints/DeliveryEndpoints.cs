@@ -13,12 +13,12 @@ namespace InternetShop.Delivery.Endpoints;
 
 public static class DeliveryEndpoints
 {
-    internal record DeliveryDto(int Id, int OrderId, string Product, string Status, DateTimeOffset CreatedAt);
+    internal record DeliveryDto(int Id, int OrderId, string Status, DateTimeOffset CreatedAt);
     internal record SetDeliveriedDto(int OrderId);
 
     internal static IEndpointRouteBuilder MapApplicationEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/")
+        var usersGroup = endpoints.MapGroup("/delivery")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetDeliveriesAsync);
@@ -39,7 +39,7 @@ public static class DeliveryEndpoints
         var notifications = await dbContext.Deliveries
             .AsNoTracking()
             .OrderByDescending(_ => _.CreatedAt)
-            .Select(reservation => new DeliveryDto(reservation.Id, reservation.OrderId, reservation.Product, reservation.Status, reservation.CreatedAt))
+            .Select(reservation => new DeliveryDto(reservation.Id, reservation.OrderId, reservation.Status, reservation.CreatedAt))
             .ToListAsync(cancellationToken);
 
         return notifications.Count == 0

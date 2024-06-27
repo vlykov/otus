@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternetShop.Identity", "In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternetShop.Notify", "InternetShop.Notify\InternetShop.Notify.csproj", "{855A1632-1456-43A1-AE39-E8D651A83E45}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6EA77219-ADA4-4FD0-9940-359433FB842A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{855A1632-1456-43A1-AE39-E8D651A83E45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{855A1632-1456-43A1-AE39-E8D651A83E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{855A1632-1456-43A1-AE39-E8D651A83E45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EA77219-ADA4-4FD0-9940-359433FB842A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EA77219-ADA4-4FD0-9940-359433FB842A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EA77219-ADA4-4FD0-9940-359433FB842A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EA77219-ADA4-4FD0-9940-359433FB842A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

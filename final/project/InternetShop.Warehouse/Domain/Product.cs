@@ -5,17 +5,18 @@ public class Product
     public int Id { get; private set; }
     public string Name { get; private set; }
     public int Quantity { get; private set; }
+    public decimal Price { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
 
     protected Product() { }
 
-    public static Product Create(int id, string name)
+    public static Product Create(string name)
     {
         return new Product
         {
-            Id = id,
             Name = name,
-            Quantity = 0
+            Quantity = 0,
+            Price = 0
         };
     }
 
@@ -32,6 +33,15 @@ public class Product
         Quantity = quantity;
     }
 
+    public void SetPrice(decimal price)
+    {
+        if (price <= 0)
+        {
+            throw new InvalidOperationException("Некорректное значение для установки цены продукта");
+        }
+
+        Price = price;
+    }
 
     public void IncreaseQuantity(int amount)
     {

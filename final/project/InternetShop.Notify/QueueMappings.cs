@@ -14,7 +14,14 @@ public static class QueueMappings
         this IRabbitMqBusFactoryConfigurator rabbitConfigurator,
         IBusRegistrationContext context)
     {
-        rabbitConfigurator.ReceiveEndpoint(QueueNames.OrdersQueue, _ => _.ConfigureConsumer<OrderConfirmedConsumer>(context));
-        rabbitConfigurator.ReceiveEndpoint(QueueNames.OrdersQueue, _ => _.ConfigureConsumer<OrderUnconfirmedConsumer>(context));
+        rabbitConfigurator.ReceiveEndpoint(QueueNames.OrdersConfirmedQueue, _ =>
+        {
+            _.ConfigureConsumer<OrderConfirmedConsumer>(context);
+        });
+        rabbitConfigurator.ReceiveEndpoint(QueueNames.OrdersUnconfirmedQueue, _ =>
+        {
+            _.ConfigureConsumer<OrderUnconfirmedConsumer>(context);
+        });
+        
     }
 }

@@ -8,11 +8,11 @@ namespace InternetShop.Billing.Endpoints;
 
 public static class PaymentEndpoints
 {
-    internal record PaymentDto(int Id, int UserId, int OrderId, string Product, decimal TotalPrice, string Status, DateTimeOffset CreatedAt);
+    internal record PaymentDto(int Id, int UserId, int OrderId, decimal TotalPrice, string Status, DateTimeOffset CreatedAt);
 
     internal static IEndpointRouteBuilder MapPaymentEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/payments")
+        var usersGroup = endpoints.MapGroup("/billing/payments")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetPaymentsAsync);
@@ -32,7 +32,7 @@ public static class PaymentEndpoints
         var payments = await dbContext.Payments
             .AsNoTracking()
             .OrderByDescending(_ => _.CreatedAt)
-            .Select(payment => new PaymentDto(payment.Id, payment.UserId, payment.OrderId, payment.Product, payment.TotalPrice, payment.Status, payment.CreatedAt))
+            .Select(payment => new PaymentDto(payment.Id, payment.UserId, payment.OrderId, payment.TotalPrice, payment.Status, payment.CreatedAt))
             .ToListAsync(cancellationToken);
 
         return payments.Count == 0

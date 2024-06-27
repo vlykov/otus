@@ -1,4 +1,6 @@
-﻿namespace InternetShop.Common.Contracts.MessageBroker;
+﻿using static InternetShop.Common.Contracts.MessageBroker.Models.Orders;
+
+namespace InternetShop.Common.Contracts.MessageBroker;
 
 public class Events
 {
@@ -9,21 +11,21 @@ public class Events
 
     public class Orders
     {
-        public record OrderCreated(int OrderId, int UserId, string Product, int Quantity, decimal TotalPrice);
+        public record OrderCreated(int OrderId, int UserId, ICollection<OrderPosition> Products, decimal TotalPrice);
         public record OrderConfirmed(int OrderId, int UserId);
-        public record OrderUnconfirmed(int OrderId, int UserId);
+        public record OrderUnconfirmed(int OrderId, int UserId, string Reason);
     }
 
     public class Billing
     {
-        public record PaymentCompleted(int OrderId, string Product, int Quantity);
+        public record PaymentCompleted(int OrderId, ICollection<OrderPosition> Products);
         public record PaymentFailed(int OrderId, string Reason);
     }
 
     public class Warehouse
     {
-        public record ProductReserved(int OrderId, string Product);
-        public record ProductReservationFailed(int OrderId, string Reason);
+        public record ProductsReserved(int OrderId, ICollection<OrderPosition> Products);
+        public record ProductsReservationFailed(int OrderId, string Reason);
     }
 
     public class Delivery

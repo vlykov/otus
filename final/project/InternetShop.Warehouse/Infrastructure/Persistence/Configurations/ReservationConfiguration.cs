@@ -19,9 +19,6 @@ public sealed class ReservationConfiguration : IEntityTypeConfiguration<Reservat
         builder.Property(_ => _.ProductId)
             .IsRequired();
 
-        builder.Property(_ => _.Product)
-            .IsRequired();
-
         builder.Property(_ => _.Quantity)
             .IsRequired();
 
