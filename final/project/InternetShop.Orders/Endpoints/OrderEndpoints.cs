@@ -21,7 +21,7 @@ public static class OrderEndpoints
 
     internal static IEndpointRouteBuilder MapApplicationEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/orders")
+        var usersGroup = endpoints.MapGroup("/")
             .RequireAuthorization();
 
         usersGroup.MapPost("create", CreateOrderAsync);

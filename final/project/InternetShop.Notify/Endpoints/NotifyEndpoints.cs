@@ -13,7 +13,7 @@ public static class NotifyEndpoints
 
     internal static IEndpointRouteBuilder MapApplicationEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/notify/emails")
+        var usersGroup = endpoints.MapGroup("/emails")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetNotifyMessagesAsync);

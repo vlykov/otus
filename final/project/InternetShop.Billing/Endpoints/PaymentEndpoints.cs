@@ -12,7 +12,7 @@ public static class PaymentEndpoints
 
     internal static IEndpointRouteBuilder MapPaymentEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/billing/payments")
+        var usersGroup = endpoints.MapGroup("/payments")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetPaymentsAsync);

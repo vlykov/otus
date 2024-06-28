@@ -15,7 +15,7 @@ public static class BalanceEndpoints
 
     internal static IEndpointRouteBuilder MapBalanceEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/billing/balance")
+        var usersGroup = endpoints.MapGroup("/balance")
             .RequireAuthorization();
 
         usersGroup.MapPost("/deposit", DepositAsync);

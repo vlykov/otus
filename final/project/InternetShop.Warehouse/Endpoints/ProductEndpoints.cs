@@ -20,7 +20,7 @@ public static class ProductEndpoints
 
     internal static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/warehouse/products")
+        var usersGroup = endpoints.MapGroup("/products")
             .RequireAuthorization();
 
         usersGroup.MapPost("/quantity", ChangeQuantityAsync);

@@ -26,4 +26,8 @@
     <ProjectReference Include="..\InternetShop.Common\InternetShop.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
 </Project>

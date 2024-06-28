@@ -18,7 +18,7 @@ public static class DeliveryEndpoints
 
     internal static IEndpointRouteBuilder MapApplicationEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/delivery")
+        var usersGroup = endpoints.MapGroup("/")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetDeliveriesAsync);

@@ -25,7 +25,7 @@ public static class UsersEndpoints
     /// </summary>
     internal static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/identity/users");
+        var usersGroup = endpoints.MapGroup("/users");
 
         usersGroup.MapPost("/register", Register);
         usersGroup.MapPost("/login", Login);

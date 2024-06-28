@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "55010f6d-989d-47a2-b51f-f7944883c1fd",
+		"name": "02_Платежи",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Получение баланса",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Пополнить баланс на {amount}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": \"400.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance/deposit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"[INFO] Request headers: \" + JSON.stringify(pm.request.headers));\r",
+					"pm.test(\"[INFO] Request body: \" + pm.request.body);\r",
+					"pm.test(\"[INFO] Response headers: \" + JSON.stringify(pm.response.headers));\r",
+					"pm.test(\"[INFO] Response body: \" + responseBody);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl1",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		}
+	]
+}

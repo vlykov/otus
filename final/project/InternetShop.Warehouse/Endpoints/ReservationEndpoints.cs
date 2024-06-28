@@ -15,7 +15,7 @@ public static class ReservationEndpoints
 
     internal static IEndpointRouteBuilder MapReservationsEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var usersGroup = endpoints.MapGroup("/warehouse/reservations")
+        var usersGroup = endpoints.MapGroup("/reservations")
             .RequireAuthorization();
 
         usersGroup.MapGet("", GetReservationsAsync);

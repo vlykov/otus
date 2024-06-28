@@ -1,0 +1,465 @@
+{
+	"info": {
+		"_postman_id": "81ee9641-d566-46b3-83f3-590e54d1f1dd",
+		"name": "04_Склад",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Получение списка доступных товаров на складе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Поиск товаров на складе по наименованию",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products/search?term=Ch",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "term",
+							"value": "Ch"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_Создание нового продукта на складе (5 штук по цене 100)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{$randomProduct}}\",\r\n  \"quantity\": 5,\r\n  \"price\": 100.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_Установка количества {qty} для продукта {id} на складе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"productId\": 1,\r\n  \"quantity\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products/quantity",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products",
+						"quantity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05_Установка цены {price} для продукта {id} на складе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"productId\": 1,\r\n  \"price\": 50\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products/price",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products",
+						"price"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06_Получение резервов склада",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07_Заказ {id} по резерву отгрузить",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"orderId\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations/handover",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations",
+						"handover"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"[INFO] Request headers: \" + JSON.stringify(pm.request.headers));\r",
+					"pm.test(\"[INFO] Request body: \" + pm.request.body);\r",
+					"pm.test(\"[INFO] Response headers: \" + JSON.stringify(pm.response.headers));\r",
+					"pm.test(\"[INFO] Response body: \" + responseBody);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl1",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		}
+	]
+}

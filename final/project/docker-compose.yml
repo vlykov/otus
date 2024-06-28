@@ -4,6 +4,8 @@ services:
   internetshop.billing:
     image: ${DOCKER_REGISTRY-}internetshop-billing
     build:
+      #tags:
+      #  - "sakurlyk/otus:billing_shop"
       context: .
       dockerfile: InternetShop.Billing/Dockerfile
     depends_on:
@@ -14,6 +16,8 @@ services:
   internetshop.delivery:
     image: ${DOCKER_REGISTRY-}internetshop-delivery
     build:
+      #tags:
+      #  - "sakurlyk/otus:delivery_shop"
       context: .
       dockerfile: InternetShop.Delivery/Dockerfile
     depends_on:
@@ -24,6 +28,8 @@ services:
   internetshop.identity:
     image: ${DOCKER_REGISTRY-}internetshop-identity
     build:
+      #tags:
+      #  - "sakurlyk/otus:identity_shop"
       context: .
       dockerfile: InternetShop.Identity/Dockerfile
     depends_on:
@@ -34,6 +40,8 @@ services:
   internetshop.notify:
     image: ${DOCKER_REGISTRY-}internetshop-notify
     build:
+      #tags:
+      #  - "sakurlyk/otus:notify_shop"
       context: .
       dockerfile: InternetShop.Notify/Dockerfile
     depends_on:
@@ -44,6 +52,8 @@ services:
   internetshop.orders:
     image: ${DOCKER_REGISTRY-}internetshop-orders
     build:
+      #tags:
+      #  - "sakurlyk/otus:orders_shop"
       context: .
       dockerfile: InternetShop.Orders/Dockerfile
     depends_on:
@@ -54,6 +64,8 @@ services:
   internetshop.warehouse:
     image: ${DOCKER_REGISTRY-}internetshop-warehouse
     build:
+      #tags:
+      #  - "sakurlyk/otus:warehouse_shop"
       context: .
       dockerfile: InternetShop.Warehouse/Dockerfile
     depends_on:
