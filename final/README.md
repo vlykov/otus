@@ -3,10 +3,11 @@
 # Вводные для реализации
   
 ## Общая схема взаимодействия для роли "Покупатель"
-   
-![client_schema](./assets/userstories/image_services_for_client.png)  
 
-[Декомпозиция и пользовательские истории (Gerkin)](./assets/UserStories/README.md)  
+[Декомпозиция и пользовательские истории (Gerkin)](./assets/userstories/README.md)  
+  
+
+![client_schema](./assets/userstories/image_services_for_client.png)  
 
 ## Общая схема взаимодействия для роли "Работник склада"
   
