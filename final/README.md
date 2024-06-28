@@ -86,6 +86,16 @@ helm repo update bitnami
 helm -n sakurlyk-shop install rabbitmq oci://registry-1.docker.io/bitnamicharts/rabbitmq --set auth.username=user,auth.password=password
 ```
 
+Устанавливаем Prometheus и Grafana:
+
+В папке Helm выполняем:
+
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm -n sakurlyk-shop install monitoring prometheus-community/kube-prometheus-stack -f .\kube-prometheus-stack\values.yaml
+```
+
 В папке Helm выполняем команды установки сервисов  
 ```
 helm -n sakurlyk-shop install identity-chart .\identity-chart
@@ -105,6 +115,42 @@ helm -n sakurlyk-shop install notify-chart .\notify-chart
 ```
 kubectl port-forward --namespace=m service/nginx-ingress-nginx-controller 80:80
 ```
+  
+## Grafana
+
+После установки приложения dashboard с именем `CUSTOM DASHBOARD` и alert rules будут автоматически доступны в графане.  
+  
+Для возможности обращения к Grafana:  
+  
+```
+kubectl port-forward --namespace=sakurlyk-shop service/monitoring-grafana 9000:80
+```
+  
+Подключаемся по адресу http://localhost:9000  
+  
+Учетные данные пользователя Grafana:  
+  
+логин: admin  
+пароль: password
+
+Пример отображения данных на dashboard-е:
+
+![Пример отображения данных на dashboard-е](./assets/grafana.png)
+
+## Prometheus
+
+Для возможности обращения к Prometheus (при необходимости):  
+  
+```
+kubectl port-forward --namespace=sakurlyk-shop service/monitoring-kube-prometheus-prometheus 9090:9090
+```
+  
+Подключаемся по адресу http://localhost:9090
+
+Пример отображения данных на dashboard-е Prometheus-а:
+
+![Пример отображения данных на dashboard-е](./assets/prometheus.png)
+
   
 ## RabbitMq
   
