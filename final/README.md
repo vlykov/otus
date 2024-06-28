@@ -4,9 +4,6 @@
   
 ## Общая схема взаимодействия для роли "Покупатель"
 
-[Декомпозиция и пользовательские истории (Gerkin)](./assets/userstories/README.md)  
-  
-
 ![client_schema](./assets/userstories/image_services_for_client.png)  
 
 ## Общая схема взаимодействия для роли "Работник склада"
@@ -16,6 +13,10 @@
 ## Общая схема взаимодействия для роли "Курьер"
   
 ![courier_schema](./assets/userstories/image_services_for_courier_worker.png)  
+  
+## Пользовательские истории
+  
+[Декомпозиция и пользовательские истории (Gerkin)](./assets/userstories/README.md)  
   
 ## Диаграммы последовательностей
 
