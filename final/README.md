@@ -113,12 +113,3 @@ kubectl port-forward --namespace sakurlyk-shop svc/rabbitmq 15672:15672
   
 ![RabbitMq connections](./assets/rabbitmq_connections.png)  
   
-## Тестирование
-  
-После установки запускаем тесты из папки 'Postman' с помощью newman и проверяем, что все корректно запустилось.  
-  
-```
-newman run "shop.postman_collection.json"
-```
-  
-Результаты:
