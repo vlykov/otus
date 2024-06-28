@@ -128,7 +128,9 @@ kubectl port-forward --namespace sakurlyk-shop svc/rabbitmq 15672:15672
 ![RabbitMq connections](./assets/rabbitmq_connections.png)  
   
 ## Тестирование
-  
+
+[Ссылка на результаты тестирования с использованием Postman](./postman/README.md)
+
 Для успешного прохождения бизнес-процесса в момент тестирования необходимо выполнение следующих условий:  
   
 - наличие у пользователя денежных средств на балансе счета.  
@@ -142,5 +144,3 @@ kubectl port-forward --namespace sakurlyk-shop svc/rabbitmq 15672:15672
 ```
 newman run "internetshop.postman_collection.json" --delay-request 500
 ```
-  
-[Результаты тестирования с использованием Postman](./postman/README.md)
