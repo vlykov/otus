@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "warehouse-chart.fullname" . }}-servicemonitor
+  labels:
+    {{- include "warehouse-chart.labels" . | nindent 4 }}
+spec:
+  jobLabel: {{ include "warehouse-chart.fullname" . }}
+  namespaceSelector:
+    matchNames:
+    - "{{ $.Release.Namespace }}"
+  selector:
+    matchLabels:
+      {{- include "warehouse-chart.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - interval: 5s
+    port: web
+    path: /metrics    
+    #scrapeTimeout: 30s
+    #honorLabels: true
+    #scheme: http

@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "notify-chart.fullname" . }}-servicemonitor
+  labels:
+    {{- include "notify-chart.labels" . | nindent 4 }}
+spec:
+  jobLabel: {{ include "notify-chart.fullname" . }}
+  namespaceSelector:
+    matchNames:
+    - "{{ $.Release.Namespace }}"
+  selector:
+    matchLabels:
+      {{- include "notify-chart.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - interval: 5s
+    port: web
+    path: /metrics    
+    #scrapeTimeout: 30s
+    #honorLabels: true
+    #scheme: http
