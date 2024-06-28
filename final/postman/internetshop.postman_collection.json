@@ -1,0 +1,1965 @@
+{
+	"info": {
+		"_postman_id": "d541f18f-9bd9-4997-8e68-f84a2381a6bb",
+		"name": "00_Сценарий",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36286588"
+	},
+	"item": [
+		{
+			"name": "01_Зарегистрировать пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('User is created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.collectionVariables.set('userId', +response.id);\r",
+							"  \r",
+							"  pm.expect(response.id).not.undefined;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('login', pm.variables.replaceIn('{{$randomUserName}}'));\r",
+							"pm.collectionVariables.set('password', pm.variables.replaceIn('{{$randomPassword}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"email\": \"{{$randomEmail}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/identity/users/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"identity",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02_Вход пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/identity/users/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"identity",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_Создание нового продукта на складе (5 штук по цене 100)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Product is create', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.collectionVariables.set('createdProductId', response.productId);\r",
+							"  pm.collectionVariables.set('createdProductName', response.productName);\r",
+							"  pm.collectionVariables.set('createdProductQty', response.quantity);\r",
+							"  pm.collectionVariables.set('createdProductPrice', response.price);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{$randomProduct}}\",\r\n  \"quantity\": 5,\r\n  \"price\": 100.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_Получение списка доступных товаров на складе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Product is exists', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let id = pm.collectionVariables.get('createdProductId');\r",
+							"  let name = pm.collectionVariables.get('createdProductName');\r",
+							"  let qty = pm.collectionVariables.get('createdProductQty');\r",
+							"  let price = pm.collectionVariables.get('createdProductPrice');\r",
+							"\r",
+							"  let product = response.find(a => a.productId === id);\r",
+							"  pm.expect(product).not.undefined;\r",
+							"  pm.expect(product.productName).to.equal(name);\r",
+							"  pm.expect(product.quantity).to.equal(qty);\r",
+							"  pm.expect(product.price).to.equal(price);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05_Установка количества {+2} для продукта {id} на складе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  let qty = pm.collectionVariables.get('newQuantity');\r",
+							"  pm.collectionVariables.set('createdProductQty', qty);\r",
+							"  pm.collectionVariables.set('newQuantity', 0);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let createdProductId = pm.collectionVariables.get('createdProductId');\r",
+							"let qty = pm.collectionVariables.get('createdProductQty');\r",
+							"pm.collectionVariables.set('newQuantity', qty + 2);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"productId\": {{createdProductId}},\r\n  \"quantity\": {{newQuantity}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products/quantity",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products",
+						"quantity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06_Установка цены {+25} для продукта {id} на складе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  let newPrice = pm.collectionVariables.get('newPrice');\r",
+							"  pm.collectionVariables.set('createdProductPrice', newPrice);\r",
+							"  pm.collectionVariables.set('newPrice', 0);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let createdProductId = pm.collectionVariables.get('createdProductId');\r",
+							"let price = pm.collectionVariables.get('createdProductPrice');\r",
+							"pm.collectionVariables.set('newPrice', price + 25);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"productId\": {{createdProductId}},\r\n  \"price\": {{newPrice}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products/price",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products",
+						"price"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07_Поиск товаров на складе по наименованию",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Product is exists', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let id = pm.collectionVariables.get('createdProductId');\r",
+							"  let name = pm.collectionVariables.get('createdProductName');\r",
+							"  let qty = pm.collectionVariables.get('createdProductQty');\r",
+							"  let price = pm.collectionVariables.get('createdProductPrice');\r",
+							"\r",
+							"  let product = response.find(a => a.productId === id);\r",
+							"  pm.expect(product).not.undefined;\r",
+							"  pm.expect(product.productName).to.equal(name);\r",
+							"  pm.expect(product.quantity).to.equal(qty);\r",
+							"  pm.expect(product.price).to.equal(price);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/products/search?term={{createdProductName}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "term",
+							"value": "{{createdProductName}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "08_Создать заказ 2x {product_id}, {product_name}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let id = pm.collectionVariables.get('createdProductId');\r",
+							"  let name = pm.collectionVariables.get('createdProductName');\r",
+							"  let qty = pm.collectionVariables.get('orderingQty');;\r",
+							"  let price = pm.collectionVariables.get('createdProductPrice');\r",
+							"  pm.collectionVariables.set('createdOrderId', response.id);\r",
+							"\r",
+							"  pm.expect(response.status).to.equal('Created');\r",
+							"  let product = response.positions[0];\r",
+							"  pm.expect(product).not.undefined;\r",
+							"  pm.expect(product.price * product.quantity).to.equal(response.totalPrice);\r",
+							"  pm.expect(product.productId).to.equal(id);\r",
+							"  pm.expect(product.productName).to.equal(name);\r",
+							"  pm.expect(product.quantity).to.equal(qty);\r",
+							"  pm.expect(product.price).to.equal(price);\r",
+							"  pm.expect(response.reason).to.equal(null);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('guid', pm.variables.replaceIn('{{$guid}}'));\r",
+							"pm.collectionVariables.set('orderingQty', 2);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"positions\": [\r\n    {\r\n      \"productId\": {{createdProductId}},\r\n      \"productName\": \"{{createdProductName}}\",\r\n      \"quantity\": {{orderingQty}},\r\n      \"price\": {{createdProductPrice}}\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "09_Получение списка заказов (заказ отклонён-недостаточно средств)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is declined', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let order = response.find(a => a.id === orderId);\r",
+							"  pm.expect(order).not.undefined;\r",
+							"  pm.expect(order.status).to.equal('Declined');\r",
+							"  pm.expect(order.reason).not.to.equal(null);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10_Получение баланса (=0)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance is 0', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.expect(response.balance).to.equal(0);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11_Пополнить баланс на 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": \"400.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance/deposit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12_Получение баланса (=400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance is 400', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.collectionVariables.set('balance', response.balance);\r",
+							"  pm.expect(response.balance).to.equal(400);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13_Создать заказ 2x {product_id}, {product_name}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let id = pm.collectionVariables.get('createdProductId');\r",
+							"  let name = pm.collectionVariables.get('createdProductName');\r",
+							"  let qty = pm.collectionVariables.get('orderingQty');;\r",
+							"  let price = pm.collectionVariables.get('createdProductPrice');\r",
+							"  pm.collectionVariables.set('createdOrderId', response.id);\r",
+							"  pm.collectionVariables.set('withdrawed', response.totalPrice);\r",
+							"\r",
+							"  pm.expect(response.status).to.equal('Created');\r",
+							"  let product = response.positions[0];\r",
+							"  pm.expect(product).not.undefined;\r",
+							"  pm.expect(product.price * product.quantity).to.equal(response.totalPrice);\r",
+							"  pm.expect(product.productId).to.equal(id);\r",
+							"  pm.expect(product.productName).to.equal(name);\r",
+							"  pm.expect(product.quantity).to.equal(qty);\r",
+							"  pm.expect(product.price).to.equal(price);\r",
+							"  pm.expect(response.reason).to.equal(null);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('guid', pm.variables.replaceIn('{{$guid}}'));\r",
+							"pm.collectionVariables.set('orderingQty', 2);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"positions\": [\r\n    {\r\n      \"productId\": {{createdProductId}},\r\n      \"productName\": \"{{createdProductName}}\",\r\n      \"quantity\": {{orderingQty}},\r\n      \"price\": {{createdProductPrice}}\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14_Получение баланса",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Balance decreased', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let balance = pm.collectionVariables.get('balance');\r",
+							"  let withdrawed = pm.collectionVariables.get('withdrawed');\r",
+							"  let expectBalance = balance - withdrawed;\r",
+							"    \r",
+							"  pm.expect(response.balance).to.equal(expectBalance);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/billing/balance",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "15_Получение списка заказов (заказ подтверждён)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is confirmed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let order = response.find(a => a.id === orderId);\r",
+							"  //console.log(order.reason);\r",
+							"  pm.expect(order).not.undefined;\r",
+							"  pm.expect(order.status).to.equal('Confirmed');\r",
+							"  pm.expect(order.reason).to.equal(null);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "16_Получение статусов доставки (зарезервирована)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Delivery is reserved', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let delivery = response.find(a => a.orderId === orderId);\r",
+							"  //console.log(order.reason);\r",
+							"  pm.expect(delivery).not.undefined;\r",
+							"  pm.expect(delivery.status).to.equal('Reserved');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delivery",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "17_Получение списка отправленных нотификаций (поздравление)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Last notification with Congratulations', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let userId = pm.collectionVariables.get('userId');\r",
+							"  let notify = response[0];\r",
+							"\r",
+							"  pm.expect(notify.userId).to.equal(userId);\r",
+							"  pm.expect(notify.message).include(\"Congratulations\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/notify/emails",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notify",
+						"emails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "18_Получение резервов склада (товары зарезервированы)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Warehouse products is reserved', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let warehouse = response.filter(ws => ws.orderId === orderId);\r",
+							"  _.each(warehouse, (item) => {\r",
+							"        pm.expect(item.status).to.equal('Reserved');\r",
+							"    })\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19_Заказ {id} по резерву отгрузить",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"orderId\": {{createdOrderId}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations/handover",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations",
+						"handover"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "20_Получение резервов склада (товары отгружены)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Warehouse products is handovered', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let warehouse = response.filter(ws => ws.orderId === orderId);\r",
+							"  _.each(warehouse, (item) => {\r",
+							"        pm.expect(item.status).to.equal('Handovered');\r",
+							"    })\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/warehouse/reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "21_Подтвердить, что служба доставки доставила заказ {id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"orderId\": {{createdOrderId}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/delivery/set-deliveried",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery",
+						"set-deliveried"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "22_Получение статусов доставки (доставлено)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Delivery is deliveried', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let delivery = response.find(a => a.orderId === orderId);\r",
+							"  //console.log(order.reason);\r",
+							"  pm.expect(delivery).not.undefined;\r",
+							"  pm.expect(delivery.status).to.equal('Deliveried');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delivery",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "23_Получение списка заказов (заказ завершен)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is completed', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdOrderId');\r",
+							"\r",
+							"  let order = response.find(a => a.id === orderId);\r",
+							"  //console.log(order.reason);\r",
+							"  pm.expect(order).not.undefined;\r",
+							"  pm.expect(order.status).to.equal('Completed');\r",
+							"  pm.expect(order.reason).to.equal(null);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "24_Создать заказ 2x {product_id}, {product_name} (несуществующий товар)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.collectionVariables.set('createdFailOrderId', response.id);\r",
+							"\r",
+							"  pm.expect(response.status).to.equal('Created');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('guid', pm.variables.replaceIn('{{$guid}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"positions\": [\r\n    {\r\n      \"productId\": 0,\r\n      \"productName\": \"some_product\",\r\n      \"quantity\": 2,\r\n      \"price\": 1.0\r\n    },\r\n    {\r\n      \"productId\": 0,\r\n      \"productName\": \"some_product\",\r\n      \"quantity\": 1,\r\n      \"price\": 1.0\r\n    }    \r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "24_Создать заказ 2x {product_id}, {product_name} Dublicate X-Request-Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 409', function () {\r",
+							"  pm.response.to.have.status(409);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"positions\": [\r\n    {\r\n      \"productId\": 0,\r\n      \"productName\": \"some_product\",\r\n      \"quantity\": 2,\r\n      \"price\": 1.0\r\n    },\r\n    {\r\n      \"productId\": 0,\r\n      \"productName\": \"some_product\",\r\n      \"quantity\": 1,\r\n      \"price\": 1.0\r\n    }    \r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "25_Получение списка заказов (смотрим reason = несуществующий)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is declined', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdFailOrderId');\r",
+							"\r",
+							"  let order = response.find(a => a.id === orderId);\r",
+							"  pm.expect(order).not.undefined;\r",
+							"  pm.expect(order.status).to.equal('Declined');\r",
+							"  pm.expect(order.reason).not.to.equal(null);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "26_Получение списка отправленных нотификаций (сожаление)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Last notification with Sorry', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let userId = pm.collectionVariables.get('userId');\r",
+							"  let notify = response[0];\r",
+							"\r",
+							"  pm.expect(notify.userId).to.equal(userId);\r",
+							"  pm.expect(notify.message).include(\"Sorry\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/notify/emails",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notify",
+						"emails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "27_Создать заказ 2x {product_id}, {product_name} (несуществующий товар) Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is created', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  pm.collectionVariables.set('createdFailOrderId', response.id);\r",
+							"\r",
+							"  pm.expect(response.status).to.equal('Created');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('guid', pm.variables.replaceIn('{{$guid}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"positions\": [\r\n    {\r\n      \"productId\": {{createdProductId}},\r\n      \"productName\": \"{{createdProductName}}\",\r\n      \"quantity\": 20,\r\n      \"price\": 1\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "28_Получение списка заказов (смотрим reason = нет такого кол-ва на складе)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test('Order is declined', function () {\r",
+							"  let response = pm.response.json();\r",
+							"  let orderId = pm.collectionVariables.get('createdFailOrderId');\r",
+							"\r",
+							"  let order = response.find(a => a.id === orderId);\r",
+							"  pm.expect(order).not.undefined;\r",
+							"  pm.expect(order.status).to.equal('Declined');\r",
+							"  pm.expect(order.reason).not.to.equal(null);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "29_Выход пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 200', function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/identity/users/logout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"identity",
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "30_Создать заказ 2x {product_id}, {product_name} (HTTP 401)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTPStatus 401', function () {\r",
+							"  pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test('Session cookies set', function () {\r",
+							"    let session_id = pm.cookies.get('sakurlyk.identity.session');\r",
+							"    pm.expect(session_id).not.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('guid', pm.variables.replaceIn('{{$guid}}'));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"positions\": [\r\n    {\r\n      \"productId\": 0,\r\n      \"productName\": \"some_product\",\r\n      \"quantity\": 2,\r\n      \"price\": 100.0\r\n    },\r\n    {\r\n      \"productId\": 0,\r\n      \"productName\": \"some_product\",\r\n      \"quantity\": 1,\r\n      \"price\": 100.0\r\n    }    \r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"create"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"[INFO] Request headers: \" + JSON.stringify(pm.request.headers));\r",
+					"pm.test(\"[INFO] Request body: \" + pm.request.body);\r",
+					"pm.test(\"[INFO] Response headers: \" + JSON.stringify(pm.response.headers));\r",
+					"pm.test(\"[INFO] Response body: \" + responseBody);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		}
+	]
+}

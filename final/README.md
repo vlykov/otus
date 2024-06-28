@@ -140,10 +140,7 @@ kubectl port-forward --namespace sakurlyk-shop svc/rabbitmq 15672:15672
 Запускаем тесты из папки 'Postman' с помощью newman и проверяем, что все корректно запустилось.  
   
 ```
-newman run "shop.postman_collection.json"
+newman run "internetshop.postman_collection.json" --delay-request 500
 ```
   
-Результаты:
-
-```
-```
+[Результаты тестирования с использованием Postman](./postman/README.md)
